@@ -4,6 +4,9 @@
  */
 package com.mycompany._libreria_4b;
 
+import eccezioni.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utilita.Ordinatore;
 
 /**
@@ -46,9 +49,28 @@ public class Scaffale
         {
             for(int j=0;j<scaf.getNumMaxLibri(i);j++)
             {
-                lib=scaf.getLibro(i, j);
-                if (lib!=null)
-                    this.setLibro(lib, i, j);
+                try 
+                {
+                    lib=scaf.getLibro(i, j);
+                    if (lib!=null)
+                        this.setLibro(lib, i, j);
+                    
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {
+                    //non può succedere
+                } 
+                catch (EccezionePosizioneNonValida ex) 
+                {
+                    //Non può succedere
+                } catch (EccezionePosizioneVuota ex) 
+                {
+                    //non fare nulla
+                } 
+                catch (EccezionePosizioneOccupata ex) 
+                {
+                    //non può succedere
+                }
             }
         }
     }
@@ -67,17 +89,12 @@ public class Scaffale
         se la posizione non è vuota --> return -2
         se ok  return 0
      */
-    public int setLibro(Libro lib,int ripiano, int posizione)
+    public void setLibro(Libro lib,int ripiano, int posizione) throws EccezioneRipianoNonValido, EccezionePosizioneNonValida, EccezionePosizioneOccupata
     {
-        int esito;
+
         if (ripiano<0 || ripiano>=NUM_RIPIANI)
-            return -3;
-        
-        esito=ripiani[ripiano].setVolume(lib, posizione);
-        if (esito>0)
-            return 0;
-        else
-            return esito; //vale -1(posizione non valida) o -2 (posizione non libera)
+            throw new EccezioneRipianoNonValido();
+        ripiani[ripiano].setVolume(lib, posizione);
     }
     
     /**
@@ -89,11 +106,11 @@ public class Scaffale
      * se il ripiano non è valido, la posizione non è valida o vuota --> return null
         se ok  ritorna l’oggetto libro
      */
-    public Libro getLibro(int ripiano, int posizione)
+    public Libro getLibro(int ripiano, int posizione) throws EccezioneRipianoNonValido, EccezionePosizioneNonValida, EccezionePosizioneVuota
     {
         Libro lib;
         if (ripiano<0 || ripiano>=NUM_RIPIANI)
-            return null; //ripiano non valido
+             throw new EccezioneRipianoNonValido();
         lib=ripiani[ripiano].getVolume(posizione);
         return lib;
     }
@@ -109,18 +126,11 @@ public class Scaffale
         se già vuota --> return -2
         se ok  return 0
      */
-    public int rimuoviLibro(int ripiano, int posizione)
-    {
-        int esito;
+    public void rimuoviLibro(int ripiano, int posizione) throws EccezioneRipianoNonValido, EccezionePosizioneNonValida, EccezionePosizioneVuota
+    {     
         if(ripiano<0 || ripiano>NUM_RIPIANI)
-            return -3;
-        
-        esito=ripiani[ripiano].rimuoviVolume(posizione);
-        
-        if(esito>=0)
-            return 0; //rimozione ok
-        else
-           return esito; //-1 (posizione non valida) o -2 posizione vuota 
+            throw new EccezioneRipianoNonValido();   
+        ripiani[ripiano].rimuoviVolume(posizione);
     }
     
     public int getNumRipiani()
