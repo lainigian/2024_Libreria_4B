@@ -207,12 +207,23 @@ public class Scaffale
         {
             for(int j=0;j<ripiani[i].getNumMaxVolumi();j++)
             {
-                lib=this.getLibro(i, j);
-                if(lib!=null)
+                try 
                 {
+                    lib=this.getLibro(i, j);
                     if (lib.getAutore().equalsIgnoreCase(autoreDaCercare))
-                        contaLibriAutore++;
-                }   
+                        contaLibriAutore++;   
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {
+                    //non succederà mai
+                } 
+                catch (EccezionePosizioneNonValida ex)
+                {
+                    //non succederà mai
+                } catch (EccezionePosizioneVuota ex) 
+                {
+                        //non fare nulla.
+                }
             }
         }
         
@@ -228,15 +239,26 @@ public class Scaffale
         {
             for(int j=0;j<ripiani[i].getNumMaxVolumi();j++)
             {
-                lib=this.getLibro(i, j);
-                if(lib!=null)
-                {
+                try {
+                    lib=this.getLibro(i, j);
                     if (lib.getAutore().equalsIgnoreCase(autoreDaCercare))
                     {
                         elencoTitoliAutore[contaLibriAutore]=lib.getTitolo();
                         contaLibriAutore++;
-                    }
-                }   
+                    } 
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {   
+                    //non succederà mai
+                } 
+                catch (EccezionePosizioneNonValida ex) 
+                {
+                       //non succederà mai
+                } 
+                catch (EccezionePosizioneVuota ex) 
+                {
+                    //non fare nulla
+                }
             }
         }
         return elencoTitoliAutore;
@@ -257,11 +279,23 @@ public class Scaffale
         {
             for(int j=0;j<getNumMaxLibri(i);j++)
             {
-                lib=getLibro(i, j);
-                if (lib!=null)
+                try 
                 {
+                    lib=getLibro(i, j);
                     elencoLibriOrdinato[c]=lib;
-                    c++;
+                    c++; 
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {
+                    //non succederà mai
+                } 
+                catch (EccezionePosizioneNonValida ex) 
+                {
+                    //non succederà mai
+                } 
+                catch (EccezionePosizioneVuota ex) 
+                {
+                    //non fare nulla
                 }
             }
         }

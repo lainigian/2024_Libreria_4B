@@ -4,7 +4,13 @@
 
 package com.mycompany._libreria_4b;
 
+import eccezioni.EccezionePosizioneNonValida;
+import eccezioni.EccezionePosizioneOccupata;
+import eccezioni.EccezionePosizioneVuota;
+import eccezioni.EccezioneRipianoNonValido;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utilita.Menu;
 
 /**
@@ -68,27 +74,49 @@ public class App {
                     ripiano=tastiera.nextInt();
                     System.out.println("Posizione (0..14) --> ");
                     posizione=tastiera.nextInt();
-                    esito=s1.setLibro(lib, ripiano, posizione);
-                    if(esito==-1)
-                        System.out.println("Posizione non valida!");
-                    else if(esito==-3)
-                        System.out.println("Ripiano non valido!");
-                    else if(esito==-2)
-                        System.out.println("Posizione occupata!");
-                    else
+                
+                    try 
+                    {
+                        s1.setLibro(lib, ripiano, posizione);
                         System.out.println("Volume inserito correttamente.");
-                    
-                    break;
+                    } 
+                    catch (EccezioneRipianoNonValido ex) 
+                    {
+                        System.out.println("Ripiano non valido!");
+                    } 
+                    catch (EccezionePosizioneNonValida ex) 
+                    {
+                        System.out.println("Posizione non valida!");
+                    } 
+                    catch (EccezionePosizioneOccupata ex) 
+                    {
+                        System.out.println("Posizione occupata!");
+                    }         
+                   break;
+
                 case 3:
                     System.out.println("Ripiano (0..4) --> ");
                     ripiano=tastiera.nextInt();
                     System.out.println("Posizione (0..14) --> ");
                     posizione=tastiera.nextInt();
-                    lib=s1.getLibro(ripiano, posizione);
-                    if (lib==null)
-                        System.out.println("Volume non trovato");
-                    else
+                
+                    try 
+                    {
+                        lib=s1.getLibro(ripiano, posizione);
                         System.out.println("Libro cercato:\n"+lib.toString());
+                    } 
+                    catch (EccezioneRipianoNonValido ex) 
+                    {
+                        System.out.println("Ripiano non valido!");
+                    } 
+                    catch (EccezionePosizioneNonValida ex) 
+                    {
+                        System.out.println("Posizione non valida!");
+                    } 
+                    catch (EccezionePosizioneVuota ex)
+                    {
+                        System.out.println("Nessun volume presente in quel ripiano/posizione!");
+                    }
                     break;
                     
                 case 4:
@@ -96,16 +124,27 @@ public class App {
                     ripiano=tastiera.nextInt();
                     System.out.println("Posizione (0..14) --> ");
                     posizione=tastiera.nextInt();
-                    esito=s1.rimuoviLibro(ripiano, posizione);
-                    if (esito==-3)
-                        System.out.println("Ripiano non valido");
-                    else if(esito==-1)
-                        System.out.println("Posizione non valida");
-                    else if(esito==-2)
-                        System.out.println("La posizione è già vuota. Nessun libro è stto rimosso");
-                    else    
+                
+                    try 
+                    {
+                        s1.rimuoviLibro(ripiano, posizione);
                         System.out.println("Il libro è stato rimosso correttamente");
+                    } 
+                    catch (EccezioneRipianoNonValido ex) 
+                    {
+                          System.out.println("Ripiano non valido");
+                    } 
+                    catch (EccezionePosizioneNonValida ex) 
+                    {
+                         System.out.println("Posizione non valida");
+                    } 
+                    catch (EccezionePosizioneVuota ex) 
+                    {
+                         System.out.println("La posizione è già vuota. Nessun libro è stto rimosso");
+                    }
+                  
                     break;
+
                 case 5:
                     System.out.println("Autore --> ");
                     autore=tastiera.nextLine();
