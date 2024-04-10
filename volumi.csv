@@ -1,2 +1,6 @@
-1;1;I promessi sposi;Manzoni;500
-3;2;La divina commedia;Dante;300
+1;1;a;a;2
+1;2;b;b;2
+-1;1;c;c;2
+1;433;d;d;2
+1;2;f;f;3
+0;0;e;e;2
