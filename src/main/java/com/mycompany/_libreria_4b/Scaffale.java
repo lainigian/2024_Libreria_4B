@@ -5,6 +5,7 @@
 package com.mycompany._libreria_4b;
 
 import eccezioni.*;
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilita.Ordinatore;
@@ -13,7 +14,7 @@ import utilita.Ordinatore;
  *
  * @author gian
  */
-public class Scaffale 
+public class Scaffale implements Serializable
 {
     private static final int NUM_RIPIANI=5;
     private Mensola[] ripiani;

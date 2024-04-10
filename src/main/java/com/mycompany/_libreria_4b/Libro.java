@@ -4,13 +4,15 @@
  */
 package com.mycompany._libreria_4b;
 
+import java.io.Serializable;
+
 /**
  * Rappresenta un libro
  * costoPagina rappresenta il costo per realizzare ciascuna pagina del libro
  * COSTO FISSO rappresenta il costo fisso pre realizzare una copia del libro.
  * @author gian
  */
-public class Libro 
+public class Libro implements Serializable
 {
     private String titolo;
     private String autore;
