@@ -103,4 +103,10 @@ public class Libro implements Serializable
         String s=getTitolo()+";"+getAutore()+";"+getNumeroPagine()+";"+prezzo()+"€";
         return s;
     }
+    
+    public boolean equals(Object oggetto)
+    {
+        Libro lib=(Libro) oggetto; //cast a Libro
+        return (this.titolo.equals(lib.getTitolo()) && this.autore.equals(lib.getAutore()) && this.numeroPagine==lib.getNumeroPagine());
+    }
 }

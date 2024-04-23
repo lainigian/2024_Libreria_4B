@@ -5,10 +5,17 @@
 package com.mycompany._libreria_4b;
 
 import eccezioni.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilita.Ordinatore;
+import utilita.TextFile;
 
 /**
  *
@@ -307,6 +314,115 @@ public class Scaffale implements Serializable
     }
     
     
+    public void esportaCSV(String nomeFileCSV) throws IOException
+    {
+        TextFile f1;
+        Libro lib;
+       
+        f1= new TextFile(nomeFileCSV,'W'); //Apro ill file in scrittura
+        String datiVolume;
+        for(int i=0;i<getNumRipiani();i++)
+        {
+            for(int j=0;j<this.getNumMaxLibri(i);j++)
+            {
+                try 
+                {
+                    lib=this.getLibro(i, j);
+                    datiVolume=i+";"+j+";"+lib.getTitolo()+";"+lib.getAutore()+";"+lib.getNumeroPagine();
+                    f1.toFile(datiVolume);
+                } 
+                catch (EccezioneRipianoNonValido | EccezionePosizioneNonValida ex) 
+                {
+                        //Non succederà mai
+                }                              
+                catch (EccezionePosizioneVuota ex) 
+                {
+                        //non fare nulle, vai alla prossima posizione
+                } 
+                catch (FileException ex) 
+                {
+                    //non succederà mai
+                }
+            }
+        }
+        f1.closeFile();  //Tutti i volumi sono statoi scritti
+    }
+    
+    public void importaCSV(String nomeFile) throws IOException
+    {
+        String rigaLetta;
+        String[] datiVolume;
+        TextFile f1;
+        String titolo, autore;
+        int numeroPagine, ripiano, posizione;
+        Libro lib;
+           
+        //Importa da file CSV
+        f1=new TextFile(nomeFile,'R');
+        do
+        {
+            try
+            {
+                rigaLetta=f1.fromFile();
+                datiVolume=rigaLetta.split(";");
+                ripiano=Integer.parseInt(datiVolume[0]);
+                posizione=Integer.parseInt(datiVolume[1]);
+                titolo=datiVolume[2];
+                autore=datiVolume[3];
+                numeroPagine=Integer.parseInt(datiVolume[4]);
+                lib=new Libro(titolo,autore,numeroPagine);
+                try 
+                {
+                    this.setLibro(lib, ripiano, posizione);
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {
+                   // System.out.println("Errore: ripiano "+ripiano+ " non corretto per il volume "+titolo);
+                } 
+                catch (EccezionePosizioneNonValida ex) 
+                {
+                   //  System.out.println("Errore: posizione "+posizione+ " non corretta per il volume "+titolo);
+                }
+                catch (EccezionePosizioneOccupata ex) 
+                {
+                  //   System.out.println("Nel ripiano  "+ripiano+ " e posizione "+posizione+" è già presente un volume. Il volume "+titolo+ " non sarà posizionato nello scaffale.");
+                }
+                catch (NumberFormatException e)
+                {
+                    //nulla
+                }
+            }
+            catch (FileException ex) 
+            {
+                //fine del file
+                f1.closeFile();
+                System.out.println("Fine operazione di caricamento");
+                break;
+            }
+        }while(true);                
+    } 
+    
+    
+    public void salvaDati(String nomeFile) throws FileNotFoundException, IOException
+    {
+        
+        ObjectOutputStream writer=new ObjectOutputStream(new FileOutputStream(nomeFile));
+        writer.writeObject(this);
+        writer.flush();
+        writer.close();
+        System.out.println("Salvataggio avvenuto correttamente");
+
+    }
+    
+    public Scaffale caricaDati(String nomeFile) throws FileNotFoundException, IOException, ClassNotFoundException
+    {
+        Scaffale s;
+        ObjectInputStream reader=new ObjectInputStream(new FileInputStream(nomeFile));
+        s=(Scaffale)reader.readObject();
+        reader.close();
+        System.out.println("Caricamento effettuato correttamente");
+        return s;
+    }
     
     public String toString()
     {
