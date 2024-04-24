@@ -5,10 +5,17 @@
 package com.mycompany._libreria_4b;
 
 import eccezioni.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utilita.Ordinatore;
+import utilita.TextFile;
 
 /**
  *
@@ -307,6 +314,112 @@ public class Scaffale implements Serializable
     }
     
     
+    public void esportaCSV(String nomeFile) throws IOException
+    {
+        TextFile f1;
+        Libro lib;
+       
+        f1= new TextFile(nomeFile,'W'); //Apro il  file in scrittura
+        String datiVolume;
+        for(int i=0;i<this.getNumRipiani();i++)
+        {
+            for(int j=0;j<this.getNumMaxLibri(i);j++)
+            {
+                try 
+                {
+                    lib=this.getLibro(i, j);
+                    datiVolume=i+";"+j+";"+lib.getTitolo()+";"+lib.getAutore()+";"+lib.getNumeroPagine();
+                    f1.toFile(datiVolume);
+                } 
+                catch (EccezioneRipianoNonValido | EccezionePosizioneNonValida ex) 
+                {
+                        //Non succederà mai
+                }                              
+                catch (EccezionePosizioneVuota ex) 
+                {
+                        //non fare nulla, vai alla prossima posizione
+                } 
+                catch (FileException ex) 
+                {
+                    //non succederà mai
+                }
+            }
+        }
+        f1.closeFile();  //Tutti i volumi sono statoi scritti
+        System.out.println("Esportazione avvenuta correttamente.");
+        
+    }
+    
+    public void importaDaCSV(String nomeFile) throws IOException
+    {
+        String rigaLetta;
+        String[] datiVolume;
+        TextFile f1;
+        int ripiano, posizione, numeroPagine;
+        String titolo, autore;
+        Libro lib;
+          
+        //Importa da file CSV
+        f1=new TextFile(nomeFile,'R');
+        do
+        {
+            try
+            {
+                rigaLetta=f1.fromFile();
+                datiVolume=rigaLetta.split(";");
+                ripiano=Integer.parseInt(datiVolume[0]);
+                posizione=Integer.parseInt(datiVolume[1]);
+                titolo=datiVolume[2];
+                autore=datiVolume[3];
+                numeroPagine=Integer.parseInt(datiVolume[4]);
+                lib=new Libro(titolo,autore,numeroPagine);
+                try 
+                {
+                    this.setLibro(lib, ripiano, posizione);
+                } 
+                catch (EccezioneRipianoNonValido ex) 
+                {
+                       //Non faccio nulla
+                } 
+                catch (EccezionePosizioneNonValida ex) 
+                {
+                     //Non faccio nulla
+                }
+                catch (EccezionePosizioneOccupata ex) 
+                {
+                         //Non faccio nulla
+                }
+                catch (NumberFormatException ex) 
+                {
+                         //Non faccio nulla
+                }
+            }
+            catch (FileException ex) 
+            {
+                //fine del file
+                f1.closeFile();
+                break;
+            }
+        }while(true);                
+    }
+    
+    
+    public void salvaDati(String nomeFile) throws FileNotFoundException, IOException
+    {
+        ObjectOutputStream writer=new ObjectOutputStream(new FileOutputStream(nomeFile));
+        writer.writeObject(this);
+        writer.flush();
+        writer.close();
+    }
+    
+    public Scaffale caricaDati(String nomeFile) throws FileNotFoundException, IOException, ClassNotFoundException
+    {
+        Scaffale s1;
+        ObjectInputStream reader=new ObjectInputStream(new FileInputStream(nomeFile));
+        s1=(Scaffale)reader.readObject();
+        reader.close();
+        return s1;
+    }
     
     public String toString()
     {
